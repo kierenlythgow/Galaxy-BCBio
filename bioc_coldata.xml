@@ -1,0 +1,28 @@
+<tool id="bioc_coldata" name="Set column data in Bioconductor object" version="0.1.0">
+    <requirements>
+        <requirement type="package">bcbio_nextgen</requirement>
+    </requirements>
+
+    <command detect_errors="exit_code"><![CDATA[
+
+        Rscript '$__tool_directory__/bioc_coldata.r' $mismatch -m '$metadata' -i '$rdata_in' -o '$rdata_out'
+
+    ]]></command>
+
+    <inputs>
+
+        <param name="metadata" format="tabular" type="data" label="Select a metadata file" />
+        <param name="rdata_in" format="binary" type="data" multiple="true" label="Select an RData object" />
+        <param name="mismatch" type="select" label="Joining metadata" multiple="true" display="radio">
+            <option value="" selected="True">Raise error</option>
+            <option value="-g">Inner join</option>
+        </param>
+    </inputs>
+
+    <outputs>
+        <data name="rdata_out" format="binary" />
+    </outputs>
+    <help><![CDATA[
+        TODO: Fill in help.
+    ]]></help>
+</tool>

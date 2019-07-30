@@ -1,0 +1,80 @@
+<tool id="bcbio" name="Run bcbio nextgen" version="0.1.0">
+    <requirements>
+        <requirement type="package">bcbio_nextgen</requirement>
+    </requirements>
+
+    <command detect_errors="exit_code"><![CDATA[
+
+        python '$__tool_directory__/bcbio.py' '$manifest' '$metadata' '$type.genome_select' '$type.aln_type' '$multiqc' '$final_tar' '$rdata'
+
+    ]]></command>
+
+    <configfiles>
+        <configfile name="manifest">
+          	sample_id,file1,file2
+            #for $pair_id in $fq.keys()
+                $pair_id,#slurp
+                #for $el_id in $fq[$pair_id].keys()
+                    $fq[$pair_id][$el_id],#slurp
+                #end for
+
+            #end for
+        </configfile>
+        <!--configfile name="metadata">
+          	sample_id,treatment,group
+            #for $pair_id in $tsvdata.keys()
+                $pair_id,#slurp
+                #for $el_id in $tsvdata[$pair_id].keys()
+                    $tsvdata[$pair_id][$el_id],#slurp
+                #end for
+
+            #end for
+        </configfile-->
+        <!--inputs name="inputs" filename="inputs.json" data_style="paths"/-->
+    </configfiles>
+
+    <inputs>
+
+        <param name="fq" format="fastq,fastq.gz,fastqsanger,fastqsanger.gz" type="data_collection" collection_type="list:paired"
+               multiple="true" label="Select a paired collection" help="See help section for an explanation of dataset collections"/>
+        <param name="metadata" format="tabular" type="data" label="Select a metadata file" />
+        <conditional name="type">
+
+            <param name="genome_select" type="select" label="Choose genome">
+                <option value="GRCh37" selected="True">Homo sapiens (GRCh37)</option>
+                <option value="hg38">Homo sapiens (hg38)</option>
+                <option value="GRCm38">Mus musculus (GRCm38)</option>
+            </param>
+            <when value="GRCh37">
+                <param name="aln_type" type="select" label="Aligner">
+                    <option value="star" selected="true">star</option>
+                    <option value="hisat2">hisat2</option>
+                </param>
+            </when>
+            <when value="hg38">
+                <param name="aln_type" type="select" label="Aligner">
+                    <option value="hisat2" selected="true">hisat2</option>
+                    <option value="star">star</option>
+                </param>
+            </when>
+            <when value="GRCm38">
+                <param name="aln_type" type="select" label="Aligner">
+                    <option value="star" selected="true">star</option>
+                    <option value="hisat2">hisat2</option>
+                </param>
+            </when>
+
+        </conditional>
+    </inputs>
+
+
+
+    <outputs>
+        <data name="rdata" format="binary" />
+        <data name="multiqc" format="html" />
+        <data name="final_tar" format="tar" />
+    </outputs>
+    <help><![CDATA[
+        TODO: Fill in help.
+    ]]></help>
+</tool>
